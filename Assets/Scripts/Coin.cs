@@ -6,6 +6,7 @@ public class Coin : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            SoundManager.Instance.PlaySfx(SfxType.CoinCollect);
             Destroy(gameObject);
         }
     }

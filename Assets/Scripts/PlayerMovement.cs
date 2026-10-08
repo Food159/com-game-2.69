@@ -9,7 +9,7 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     private float jumpForce = 10f;
-    public bool isJumping = false;
+    private bool isJumping = false;
 
     [Header("Animation")]
     private Animator animator;
