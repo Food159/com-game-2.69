@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,11 +9,21 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Jump")]
     private float jumpForce = 10f;
-    private bool isJumping = false;
+    public bool isJumping = false;
+
+    [Header("Animation")]
+    private Animator animator;
 
     private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        // OnMoveOld(); // อันนี้คือ input เก่า
+        UpdateAnimation();
     }
 
     private void FixedUpdate()
@@ -22,12 +31,48 @@ public class PlayerMovement : MonoBehaviour
         rb2d.linearVelocity = new Vector2(movementInputX * moveSpeed, rb2d.linearVelocity.y);
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.CompareTag("Ground"))
+        {
+            isJumping = false;
+        }
+    }
+
+    private void Flip()
+    {
+        if (movementInputX > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+        else if (movementInputX < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
+
+    private void UpdateAnimation()
+    {
+        if (movementInputX != 0 && !isJumping)
+        {
+            animator.SetInteger("PlayerAction", 1);
+        }
+        else
+        {
+            animator.SetInteger("PlayerAction", 0);
+        }
+    }
+
+    #region [Input New] // comment อันนี้ถ้าจะใช้ input แบบเก่า ลบ comment ในบรรทัด OnMoveOld(); ใน Update() ออกด้วย
+
     public void OnMove(InputValue value)
     {
         movementInputX = value.Get<Vector2>().x;
+
+        Flip();
     }
 
-    public void OnJump(InputValue value)
+    public void OnJump(InputValue value) 
     {
         if (value.isPressed && !isJumping)
         {
@@ -36,11 +81,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    #endregion
+
+    #region [Input Old] // comment ในบรรทัด OnMoveOld(); ใน Update() ถ้าจะใช้ input แบบใหม่
+
+    private void OnMoveOld()
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        movementInputX = Input.GetAxisRaw("Horizontal");
+
+        if(Input.GetKeyDown(KeyCode.Space) && !isJumping)
         {
-            isJumping = false;
+            isJumping = true;
+            rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, jumpForce);
         }
+
+        Flip();
     }
+
+    #endregion
 }
