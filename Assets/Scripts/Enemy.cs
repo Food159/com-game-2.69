@@ -4,9 +4,10 @@ public class Enemy : MonoBehaviour
 {
     private Transform target;
     private float lookPlayerRange = 14f;
-    private float attackRange = 5f;
+    private float attackRange = 3f;
     private float attackSpeed = 1.5f;
     private float attackTimer;
+    private bool isAttacking;
 
     [Header("Animation")]
     private Animator animator;
@@ -28,27 +29,14 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (target == null) return;
-
         if (attackTimer > 0)
         {
             attackTimer -= Time.deltaTime;
         }
 
-        float distanceToTarget = Vector2.Distance(transform.position, target.position);
+        if (target == null) return;
 
-        if (distanceToTarget <= attackRange)
-        {
-            if (attackTimer <= 0)
-            {
-                animator.SetTrigger("EnemyAttack"); // still bug
-                attackTimer = attackSpeed;
-            }
-        }
-        else
-        {
-            animator.SetTrigger("EnemyIdle");
-        }
+        float distanceToTarget = Vector2.Distance(transform.position, target.position);
 
         if (distanceToTarget <= lookPlayerRange)
         {
@@ -61,11 +49,23 @@ public class Enemy : MonoBehaviour
                 transform.localScale = new Vector3(-1, 1, 1);
             }
         }
+
+        if (distanceToTarget <= attackRange)
+        {
+            if (attackTimer <= 0 && !isAttacking)
+            {
+                isAttacking = true;
+                animator.SetTrigger("EnemyAttack");
+            }
+        }
     }
 
     public void EnemyAttack()
     {
         Debug.Log("Enemy Attack");
+        animator.SetTrigger("EnemyIdle");
+        attackTimer = attackSpeed;
+        isAttacking = false;
     }
 
     private void OnDrawGizmos() // เส้นเอาไว้ดูระยะ
