@@ -62,6 +62,8 @@ public class Enemy : MonoBehaviour
 
     public void EnemyAttack()
     {
+        PlayerHP playerHP = target.GetComponent<PlayerHP>();
+        playerHP.TakeDamage(1);
         Debug.Log("Enemy Attack");
         animator.SetTrigger("EnemyIdle");
         attackTimer = attackSpeed;

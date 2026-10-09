@@ -70,6 +70,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void Die()
+    {
+        animator.SetInteger("PlayerAction", 5);
+    }
+
     #region [Input New] // comment อันนี้ถ้าจะใช้ input แบบเก่า ลบ comment ในบรรทัด OnMoveOld(); ใน Update() ออกด้วย
 
     public void OnMove(InputValue value)
