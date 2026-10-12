@@ -7,6 +7,7 @@ public class PlayerHP : MonoBehaviour
 
     private int maxHP = 3;
     private int currentHP;
+    public bool IsPlayerDead()=> player.IsDead;
 
     [Header("HP UI")]
     [SerializeField] private Image[] heartImages;
@@ -28,7 +29,7 @@ public class PlayerHP : MonoBehaviour
 
         if (currentHP <= 0)
         {
-            player.Die(); // still immortal
+            player.Die();
         }
     }
 

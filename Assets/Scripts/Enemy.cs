@@ -12,23 +12,25 @@ public class Enemy : MonoBehaviour
     [Header("Animation")]
     private Animator animator;
 
-    private void Awake()
-    {
-        animator = GetComponent<Animator>();
-    }
+    private PlayerHP playerHP;
 
-    private void Start()
+    private void Awake()
     {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        if (player != null) 
-        { 
-            target = player.transform; 
+        if (player != null)
+        {
+            target = player.transform;
         }
+
+        animator = GetComponent<Animator>();
+        playerHP = target.GetComponent<PlayerHP>();
     }
 
     private void Update()
     {
+        if (playerHP.IsPlayerDead()) return;
+
         if (attackTimer > 0)
         {
             attackTimer -= Time.deltaTime;
@@ -62,9 +64,7 @@ public class Enemy : MonoBehaviour
 
     public void EnemyAttack()
     {
-        PlayerHP playerHP = target.GetComponent<PlayerHP>();
         playerHP.TakeDamage(1);
-        Debug.Log("Enemy Attack");
         animator.SetTrigger("EnemyIdle");
         attackTimer = attackSpeed;
         isAttacking = false;

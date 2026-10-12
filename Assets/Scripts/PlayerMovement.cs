@@ -14,6 +14,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Animation")]
     private Animator animator;
 
+    private bool isDead = false;
+    public bool IsDead => isDead;
+
     private void Awake()
     {
         rb2d = GetComponent<Rigidbody2D>();
@@ -28,7 +31,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb2d.linearVelocity = new Vector2(movementInputX * moveSpeed, rb2d.linearVelocity.y);
+        if (!isDead)
+        {
+            rb2d.linearVelocity = new Vector2(movementInputX * moveSpeed, rb2d.linearVelocity.y);
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -60,6 +66,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void UpdateAnimation()
     {
+        if (isDead) return;
+
         if (movementInputX != 0 && !isJumping)
         {
             animator.SetInteger("PlayerAction", 1);
@@ -72,6 +80,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void Die()
     {
+        isDead = true;
         animator.SetInteger("PlayerAction", 5);
     }
 
@@ -79,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnMove(InputValue value)
     {
+        if (isDead) return;
+
         movementInputX = value.Get<Vector2>().x;
 
         Flip();
@@ -86,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void OnJump(InputValue value) 
     {
-        if (value.isPressed && !isJumping)
+        if (value.isPressed && !isJumping && !isDead)
         {
             isJumping = true;
             rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, jumpForce);
@@ -101,7 +112,7 @@ public class PlayerMovement : MonoBehaviour
     {
         movementInputX = Input.GetAxisRaw("Horizontal");
 
-        if(Input.GetKeyDown(KeyCode.Space) && !isJumping)
+        if(Input.GetKeyDown(KeyCode.Space) && !isJumping && !isDead)
         {
             isJumping = true;
             rb2d.linearVelocity = new Vector2(rb2d.linearVelocity.x, jumpForce);
