@@ -64,7 +64,13 @@ public class Enemy : MonoBehaviour
 
     public void EnemyAttack()
     {
-        playerHP.TakeDamage(1);
+        float distanceToTarget = Vector2.Distance(transform.position, target.position);
+
+        if (distanceToTarget <= attackRange)
+        {
+            playerHP.TakeDamage(1);
+        }
+
         animator.SetTrigger("EnemyIdle");
         attackTimer = attackSpeed;
         isAttacking = false;
