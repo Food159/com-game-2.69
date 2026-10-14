@@ -19,6 +19,11 @@ public class GameSceneManager : MonoBehaviour
         LoadGameScene("MainGame");
     }
 
+    public void RestartScene()
+    {
+        LoadGameScene(SceneManager.GetActiveScene().name);
+    }
+
     public void QuitGame()
     {
         Application.Quit();
